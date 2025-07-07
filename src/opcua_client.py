@@ -1,16 +1,28 @@
+# opcua_client.py
 from opcua import Client
-import time
 
-client = Client("opc.tcp://localhost:4840/freeopcua/server/")
-client.connect()
-print("🔍 Клиент подключен")
+class OPCBoilerClient:
+    def __init__(self, endpoint="opc.tcp://localhost:4840/freeopcua/server/"):
+        self.client = Client(endpoint)
+        self.nodes = {}
 
-boiler = client.get_root_node().get_child(["0:Objects", "2:Boiler"])
-t_hot = boiler.get_child("2:InputTempHot")
-t_cold = boiler.get_child("2:InputTempCold")
-t_out = boiler.get_child("2:OutputTemp")
-level = boiler.get_child("2:WaterLevel")
+    def connect(self):
+        self.client.connect()
+        root = self.client.get_objects_node()
+        boiler = root.get_child(["2:Boiler"])  # ❌ не находит
 
-while True:
-    print(f"🌡️ ВходГ: {t_hot.get_value()}°C | ВходХ: {t_cold.get_value()}°C | Выход: {t_out.get_value()}°C | Уровень: {level.get_value()} %")
-    time.sleep(2)
+        # ✅ Правильно:
+        boiler = self.client.get_root_node().get_child(["0:Objects", "2:Boiler"])
+
+        for variable in boiler.get_variables():
+            name = variable.get_display_name().Text
+            self.nodes[name] = variable
+
+    def disconnect(self):
+        self.client.disconnect()
+
+    def get_value(self, tag_name):
+        return self.nodes[tag_name].get_value()
+
+    def set_value(self, tag_name, value):
+        self.nodes[tag_name].set_value(value)
