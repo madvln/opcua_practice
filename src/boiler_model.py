@@ -17,19 +17,20 @@ class BoilerModel:
         in_cold = self.valve_cold * self.max_flow * dt
         out = self.valve_out * self.max_flow * dt
 
-        # В бойлер ничего не попадёт, если отток >= притоку
-        delta = in_hot + in_cold - out
-        new_volume = self.volume + delta
-        new_volume = max(0.0, min(new_volume, self.max_volume))
+        old_volume = self.volume
+        incoming = in_hot + in_cold
+        total_mass = old_volume + incoming
 
-        if new_volume > 0 and (in_hot + in_cold) > 0:
-            mixed_temp = (in_hot * self.temp_hot + in_cold * self.temp_cold) / (in_hot + in_cold)
+        if total_mass > 0 and incoming > 0:
+            mixed_temp = (in_hot * self.temp_hot + in_cold * self.temp_cold) / (incoming + 1e-6)
             self.temperature = (
-                (self.temperature * self.volume + mixed_temp * (in_hot + in_cold)) /
-                (new_volume + 1e-6)
+                (self.temperature * old_volume + mixed_temp * incoming) /
+                (total_mass + 1e-6)
             )
 
-        self.volume = new_volume
+        # Обновляем объём с учётом оттока
+        delta = incoming - out
+        self.volume = max(0.0, min(old_volume + delta, self.max_volume))
 
     def get_level_percent(self):
         return (self.volume / self.max_volume) * 100.0

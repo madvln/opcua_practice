@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>SCADA Boiler Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+</head>
+<body class="container py-4">
+    <h1 class="mb-4">💧 SCADA Интерфейс — Бойлер</h1>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h4>📊 Датчики</h4>
+                <p>🌡️ Вход горячей воды: <span id="input-hot">–</span> °C</p>
+                <p>🌡️ Вход холодной воды: <span id="input-cold">–</span> °C</p>
+                <p>🌡️ Температура на выходе: <span id="output-temp">–</span> °C</p>
+                <p>💧 Уровень воды: <span id="water-level">–</span> %</p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h4>🔧 Управление клапанами</h4>
+                <p>Горячий вход: <span id="valve-hot">–</span>% <button class="btn btn-sm btn-primary" onclick="openValveModal('ValveHotIn')">Изменить</button></p>
+                <p>Холодный вход: <span id="valve-cold">–</span>% <button class="btn btn-sm btn-primary" onclick="openValveModal('ValveColdIn')">Изменить</button></p>
+                <p>Выход: <span id="valve-out">–</span>% <button class="btn btn-sm btn-primary" onclick="openValveModal('ValveOut')">Изменить</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal fade" id="valveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <h5 class="modal-title mb-2">Изменить положение клапана</h5>
+                <input type="range" min="0" max="100" id="valveRange" class="form-range">
+                <p>Текущее значение: <span id="valveValue">0</span>%</p>
+                <button class="btn btn-success" onclick="saveValve()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

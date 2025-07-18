@@ -1,21 +1,13 @@
 import time
-from boiler_model import BoilerModel
 from opc_server import OPCBoilerServer
 
 if __name__ == "__main__":
-    model = BoilerModel()
-    server = OPCBoilerServer(model)
-
+    server = OPCBoilerServer()  # Универсальный OPC сервер без модели
     try:
         server.start()
         print("✅ OPC UA сервер запущен")
-
         while True:
-            server.update_from_nodes()
-            model.step()
-            server.update_outputs()
-            time.sleep(1)
-
+            time.sleep(1)  # Держим процесс живым
     except KeyboardInterrupt:
         print("🛑 Остановка сервера...")
     finally:
