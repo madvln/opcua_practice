@@ -51,7 +51,6 @@
    ```bash
    python opcua_client.py
    ```
-
 ---
 
 ## [OPC DA (Data access)](/docs/opc_da.md)
